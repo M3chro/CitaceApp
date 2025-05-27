@@ -93,10 +93,9 @@ Ve složce `CitaceApp`:
     * `_layout.tsx`: Hlavní (root) layout aplikace, definuje Stack navigátor.
 * `components/`: Znovupoužitelné React komponenty (`QuoteCard.tsx`, `LanguageSelector.tsx`, `StatusDisplay.tsx`).
 * `utils/`: Pomocné funkce a moduly (`api.ts` pro komunikaci s API, `storage.ts` pro AsyncStorage, `uiHelpers.ts`).
-* `.env`: Lokální soubor pro uložení API klíče (není ve verzování).
+* `.env.local`: Lokální soubor pro uložení API klíče (není ve verzování).
 * `.env.example`: Šablona pro `.env`
 
 ## 👨‍💻 Autor
 
 * Jakub Havel
----
