@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-    Button,
-    Platform,
-    ScrollView, StatusBar,
-    StyleSheet,
-    View
+  Button,
+  Platform,
+  ScrollView, StatusBar,
+  StyleSheet,
+  View
 } from 'react-native';
 import LanguageSelector from '../components/LanguageSelector';
 import QuoteCard from '../components/QuoteCard';
@@ -15,7 +15,7 @@ export default function HomeScreen() {
   const [quote, setQuote] = useState<Quote | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentLanguage, setCurrentLanguage] = useState<string>('en');
+  const [currentLanguage, setCurrentLanguage] = useState<string>('cs');
   const [languages, setLanguages] = useState<Language[]>([]);
 
   useEffect(() => {
@@ -23,19 +23,20 @@ export default function HomeScreen() {
   }, []);
 
   const loadQuote = useCallback(async () => {
+    console.log(`[UI] Načítám citaci pro jazyk: ${currentLanguage}`);
     setIsLoading(true);
     setError(null);
     setQuote(null);
     try {
-      const fetchedQuote = await fetchRandomQuote();
+      const fetchedQuote = await fetchRandomQuote(currentLanguage);
       setQuote(fetchedQuote);
     } catch (err: any) {
       console.error("[UI] Chyba při načítání citace:", err.message);
-      setError(err.message || 'Nepodařilo se načíst citaci.');
+      setError(err.message || 'Nepodařilo se načíst citaci. Zkuste to prosím znovu.');
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [currentLanguage]);
 
   useEffect(() => {
     loadQuote();
@@ -47,22 +48,21 @@ export default function HomeScreen() {
 
   const handleLanguageChange = (newLanguage: string) => {
     setCurrentLanguage(newLanguage);
-    console.log("Nově zvolený jazyk v UI (bez efektu na data):", newLanguage);
+    console.log("Nově zvolený jazyk v UI:", newLanguage);
   };
 
   const renderMainContent = () => {
     if (!isLoading && !error && quote) {
       return <QuoteCard quote={quote} />;
     }
-
     return (
       <StatusDisplay
         isLoading={isLoading}
         error={error}
-        hasData={!!quote} // true pokud quote existuje, jinak false
+        hasData={!!quote}
         onRetry={handleRefresh}
         loadingText="Načítám vaši denní dávku inspirace..."
-        noDataText="Momentálně není k dispozici žádná citace. Zkuste to prosím později."
+        noDataText="Pro zvolený jazyk momentálně není k dispozici žádná citace. Zkuste jiný jazyk nebo to zkuste později." // Upravený text
       />
     );
   };
@@ -72,11 +72,11 @@ export default function HomeScreen() {
       <StatusBar barStyle={Platform.OS === 'ios' ? 'dark-content' : 'light-content'} />
 
       <LanguageSelector
-        label="Jazyk citací:"
+        label="Vyberte jazyk citací:"
         selectedValue={currentLanguage}
         onValueChange={handleLanguageChange}
         languages={languages}
-        enabled={languages.length > 1}
+        enabled={languages.length > 1 && !isLoading}
       />
 
       <View style={styles.contentArea}>
