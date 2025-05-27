@@ -20,7 +20,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   label = "Jazyk:",
 }) => {
   return (
-    <View style={styles.pickerContainer}>
+    <View style={styles.pickerWrapper}>
       {label && <Text style={styles.pickerLabel}>{label}</Text>}
       <View style={styles.pickerBorder}>
         <Picker
@@ -31,6 +31,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           }}
           enabled={enabled}
           prompt="Vyberte jazyk"
+          itemStyle={Platform.OS === 'ios' ? styles.pickerItemIOS : undefined} 
         >
           {languages.map((lang) => (
             <Picker.Item key={lang.code} label={lang.name} value={lang.code} />
@@ -42,7 +43,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 };
 
 const styles = StyleSheet.create({
-  pickerContainer: {
+  pickerWrapper: {
     width: '100%',
     maxWidth: 350,
     marginBottom: 15,
@@ -65,8 +66,13 @@ const styles = StyleSheet.create({
   },
   picker: {
     width: '100%',
-    height: Platform.OS === 'ios' ? 120 : 60, // iOS Picker je vyšší
-    color: '#333',
+    color: '#000000',
+    height: Platform.OS === 'ios' ? 180 : 60,
+  },
+  pickerItemIOS: {
+    height: 180,
+    color: '#000000',
+    fontSize: getResponsiveFontSize(20),
   },
 });
 
