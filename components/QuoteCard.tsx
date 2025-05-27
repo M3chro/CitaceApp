@@ -1,4 +1,5 @@
 import { FontAwesome } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { Alert, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Quote } from '../utils/api';
@@ -9,6 +10,8 @@ interface QuoteCardProps {
 }
 
 const QuoteCard: React.FC<QuoteCardProps> = ({ quote }) => {
+  const router = useRouter();
+
   if (!quote) {
     return null;
   }
@@ -49,14 +52,32 @@ const QuoteCard: React.FC<QuoteCardProps> = ({ quote }) => {
     }
   };
 
-  return (
+  const handleAuthorInfo = () => {
+    if (quote && quote.author && quote.author !== 'Neznámý autor') {
+      router.push({
+        pathname: "/author/[authorName]",
+        params: { authorName: encodeURIComponent(quote.author) },
+      });
+    } else {
+      Alert.alert('Informace o autorovi', 'Pro tohoto autora nejsou dostupné další informace.');
+    }
+  };
+
+ return (
     <View style={styles.quoteCard}>
       <Text style={styles.quoteText}>{`"${quote.content}"`}</Text>
       <Text style={styles.authorText}>- {quote.author}</Text>
       
       <View style={styles.actionsContainer}>
+        {quote.author && quote.author !== 'Neznámý autor' && (
+          <TouchableOpacity onPress={handleAuthorInfo} style={styles.actionButton}>
+            <FontAwesome name="wikipedia-w" size={getResponsiveFontSize(20)} color="#555" />
+            <Text style={styles.actionButtonText}>Autor</Text>
+          </TouchableOpacity>
+        )}
+
         <TouchableOpacity onPress={handleShare} style={styles.actionButton}>
-          <FontAwesome name="share-alt" size={getResponsiveFontSize(22)} color="#555" />
+          <FontAwesome name="share-alt" size={getResponsiveFontSize(20)} color="#555" /> 
           <Text style={styles.actionButtonText}>Sdílet</Text>
         </TouchableOpacity>
       </View>
@@ -101,7 +122,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingTop: 15,
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   actionButton: {
