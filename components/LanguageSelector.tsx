@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     width: '100%',
-    height: Platform.OS === 'ios' ? 120 : 50, // iOS Picker je vyšší
+    height: Platform.OS === 'ios' ? 120 : 60, // iOS Picker je vyšší
     color: '#333',
   },
 });
