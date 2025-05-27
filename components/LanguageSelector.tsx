@@ -4,6 +4,9 @@ import { Platform, StyleSheet, Text, View } from 'react-native';
 import { Language } from '../utils/api';
 import { getResponsiveFontSize } from '../utils/uiHelpers';
 
+/**
+ * Props pro komponentu LanguageSelector.
+ */
 interface LanguageSelectorProps {
   selectedValue: string;
   onValueChange: (value: string) => void;
@@ -12,6 +15,12 @@ interface LanguageSelectorProps {
   label?: string;
 }
 
+/**
+ * Komponenta `LanguageSelector` zobrazuje popisek a nativní Picker prvek
+ * pro výběr jazyka ze zadaného seznamu.
+ * @param {LanguageSelectorProps} props - Props pro komponentu.
+ * @returns {JSX.Element} Element komponenty.
+ */
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   selectedValue,
   onValueChange,

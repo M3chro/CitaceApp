@@ -5,12 +5,21 @@ import { Alert, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-na
 import { Quote } from '../utils/api';
 import { getResponsiveFontSize } from '../utils/uiHelpers';
 
+/**
+ * Props pro komponentu QuoteCard.
+ */
 interface QuoteCardProps {
   quote: Quote | null;
   isFavorite: boolean;
   onToggleFavorite: (quote: Quote) => void;
 }
 
+/**
+ * Komponenta `QuoteCard` zobrazuje jednotlivou citaci spolu s jejím autorem
+ * a akčními tlačítky pro označení jako oblíbené, zobrazení informací o autorovi a sdílení.
+ * @param {QuoteCardProps} props - Props pro komponentu.
+ * @returns {JSX.Element | null} Element komponenty nebo null, pokud nejsou poskytnuta data citace.
+ */
 const QuoteCard: React.FC<QuoteCardProps> = ({ quote, isFavorite, onToggleFavorite }) => {
   const router = useRouter();
 
@@ -18,6 +27,9 @@ const QuoteCard: React.FC<QuoteCardProps> = ({ quote, isFavorite, onToggleFavori
     return null;
   }
 
+  /**
+   * Zpracovává akci sdílení aktuální citace pomocí nativního dialogu systému.
+   */
   const handleShare = async () => {
     if (!quote) return;
     try {
@@ -41,6 +53,10 @@ const QuoteCard: React.FC<QuoteCardProps> = ({ quote, isFavorite, onToggleFavori
     }
   };
 
+  /**
+   * Zpracovává akci pro zobrazení informací o autorovi.
+   * Naviguje na obrazovku s detailem autora, pokud je autor znám.
+   */
   const handleAuthorInfo = () => {
     if (quote && quote.author && quote.author !== 'Neznámý autor') {
       router.push({
@@ -52,6 +68,10 @@ const QuoteCard: React.FC<QuoteCardProps> = ({ quote, isFavorite, onToggleFavori
     }
   };
 
+  /**
+   * Zpracovává stisknutí tlačítka pro označení/odznačení citace jako oblíbené.
+   * Volá callback funkci `onToggleFavorite` předanou z rodičovské komponenty.
+   */
   const handleFavoritePress = () => {
     onToggleFavorite(quote!);
   };

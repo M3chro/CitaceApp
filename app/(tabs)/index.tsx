@@ -13,6 +13,12 @@ import StatusDisplay from '../../components/StatusDisplay';
 import { fetchRandomQuote, getAvailableLanguages, Language, Quote } from '../../utils/api';
 import * as FavoritesStorage from '../../utils/storage';
 
+/**
+ * Hlavní obrazovka aplikace pro zobrazení náhodných citací.
+ * Umožňuje výběr jazyka, označování oblíbených citací,
+ * zobrazení informací o autorovi a sdílení citací.
+ * Také spravuje stavy načítání, chyb a cooldown pro API požadavky.
+ */
 export default function HomeScreen() {
   const [quote, setQuote] = useState<Quote | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -24,6 +30,10 @@ export default function HomeScreen() {
   const [isCoolingDown, setIsCoolingDown] = useState<boolean>(false);
   const cooldownTimerRef = useRef<NodeJS.Timeout | number | null>(null);
 
+  /**
+   * Načte seznam dostupných jazyků při prvním vytvoření komponenty
+   * a nastaví cleanup funkci pro případný běžící cooldown timer.
+   */
   useEffect(() => {
     setLanguages(getAvailableLanguages());
 
@@ -34,6 +44,10 @@ export default function HomeScreen() {
     };
   }, []);
 
+  /**
+   * Kontroluje a nastavuje stav oblíbenosti pro aktuálně zobrazenou citaci.
+   * Spouští se vždy, když se změní objekt `quote`.
+   */
   useEffect(() => {
     const checkIfFavorite = async () => {
       if (quote) {
@@ -47,6 +61,12 @@ export default function HomeScreen() {
     checkIfFavorite();
   }, [quote]);
 
+  /**
+   * Hlavní funkce pro načtení náhodné citace z API.
+   * Používá aktuálně zvolený jazyk. Spravuje stavy `isLoading`, `error`, `quote`
+   * a také nastavuje cooldown po dokončení.
+   * Je obalena v `useCallback` pro optimalizaci a správné fungování v závislostech `useEffect`.
+   */
   const loadQuote = useCallback(async () => {
     console.log(`[UI TabsIndex] Načítám citaci pro jazyk: ${currentLanguage}`);
     setIsLoading(true);
@@ -73,11 +93,19 @@ export default function HomeScreen() {
     }
   }, [currentLanguage]);
 
+  /**
+   * Zajišťuje načtení citace při prvním renderu komponenty
+   * a také při každé změně jazyka (díky závislosti na `loadQuote`, která závisí na `currentLanguage`).
+   */
   useEffect(() => {
     loadQuote();
   }, [loadQuote]);
 
 
+  /**
+   * Handler pro stisknutí tlačítka "Další citace".
+   * Spustí načtení nové citace, pokud neprobíhá jiné načítání nebo cooldown.
+   */
   const handleRefresh = () => {
     if (isLoading || isCoolingDown) {
       if (isLoading) console.log('[UI TabsIndex] Načítání již probíhá, ignoruji kliknutí.');
@@ -87,6 +115,11 @@ export default function HomeScreen() {
     loadQuote();
   };
 
+  /**
+   * Handler pro změnu jazyka v komponentě LanguageSelector.
+   * Aktualizuje stav `currentLanguage`.
+   * @param newLanguage Nově vybraný kód jazyka.
+   */
   const handleLanguageChange = (newLanguage: string) => {
     if (isLoading || isCoolingDown) {
       console.log('[UI TabsIndex] Načítání/cooldown probíhá, změna jazyka bude mít efekt později nebo je ignorována.');
@@ -94,6 +127,11 @@ export default function HomeScreen() {
     setCurrentLanguage(newLanguage);
   };
 
+  /**
+   * Handler pro přepnutí stavu oblíbenosti citace.
+   * Přidá nebo odebere citaci z oblíbených v AsyncStorage a aktualizuje lokální stav.
+   * @param quoteToToggle Objekt citace, u které se má změnit stav oblíbenosti.
+   */
   const handleToggleFavorite = async (quoteToToggle: Quote) => {
     if (!quoteToToggle) return;
     const currentStatus = await FavoritesStorage.isFavorite(quoteToToggle.id);
@@ -113,6 +151,11 @@ export default function HomeScreen() {
     }
   };
 
+  /**
+   * Pomocná funkce pro renderování hlavního obsahu obrazovky.
+   * Zobrazuje buď QuoteCard s citací, nebo StatusDisplay (načítání, chyba, žádná data).
+   * @returns {JSX.Element} Komponenta k zobrazení.
+   */
   const renderMainContent = () => {
     if (!isLoading && !error && quote) {
       return (
