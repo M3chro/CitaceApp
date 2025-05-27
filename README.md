@@ -1,50 +1,101 @@
-# Welcome to your Expo app 👋
+# CitaceApp - SZZVP - Vývoj mobilní aplikace
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Jednoduchá mobilní aplikace pro platformu Android/iOS (postavená pomocí Expo) určená k zobrazování náhodných textových citací z různých jazyků, jejich sdílení, ukládání oblíbených a zobrazení informací o autorech.
 
-## Get started
+## ✨ Funkce
 
-1. Install dependencies
+Aplikace implementuje následující funkcionality:
 
-   ```bash
-   npm install
-   ```
+* **Náhodné citace:** Zobrazuje náhodné textové citace.
+* **Výběr jazyka:** Umožňuje uživateli zvolit preferovaný jazyk pro zobrazované citace.
+* **Sdílení citace:** Umožňuje sdílet aktuální citaci (text a autora) s ostatními aplikacemi v zařízení.
+* **Informace o autorovi:** Po kliknutí na ikonu u jména autora zobrazí jeho stránku na Wikipedii (v rámci aplikace pomocí WebView).
+* **Oblíbené citace:**
+    * Uživatel může označit citaci jako oblíbenou.
+    * Oblíbené citace se ukládají lokálně v zařízení.
+    * Samostatná obrazovka pro zobrazení a správu seznamu oblíbených citací.
+* **Intuitivní ovládání:** Tabová navigace pro snadný přístup k hlavním sekcím.
+* **Ochrana proti "spamování":** Ošetření proti příliš rychlému opakovanému načítání citací.
 
-2. Start the app
+## 🛠️ Použité Technologie
 
-   ```bash
-   npx expo start
-   ```
+* **Framework:** [Expo](https://expo.dev/) (SDK nejnovější verze)
+* **Knihovna UI:** [React Native](https://reactnative.dev/)
+* **Jazyk:** [TypeScript](https://www.typescriptlang.org/)
+* **Navigace:** [Expo Router](https://docs.expo.dev/router/introduction/) (file-system based routing, tab a stack navigace)
+* **Ukládání dat (oblíbené):** [`@react-native-async-storage/async-storage`](https://react-native-async-storage.github.io/async-storage/)
+* **Výběr (Picker):** [`@react-native-picker/picker`](https://github.com/react-native-picker/picker)
+* **Ikony:** [`@expo/vector-icons`](https://docs.expo.dev/guides/icons/) (konkrétně FontAwesome)
+* **WebView:** [`react-native-webview`](https://github.com/react-native-webview/react-native-webview) pro zobrazení Wikipedie.
+* **API pro citace:** [Quotes15 na RapidAPI](https://rapidapi.com/martin.svoboda/api/quotes15)
 
-In the output, you'll find options to open the app in a
+## 🚀 API
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+Pro načítání citací aplikace využívá **Quotes15 API** dostupné na platformě RapidAPI.
+* Odkaz na API: [https://rapidapi.com/martin.svoboda/api/quotes15](https://rapidapi.com/martin.svoboda/api/quotes15)
+* Pro spuštění aplikace je nutné mít vlastní API klíč z RapidAPI.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## ⚙️ Nastavení a Instalace
 
-## Get a fresh project
+Pro spuštění projektu lokálně postupujte následovně:
 
-When you're ready, run:
+### Předpoklady
 
-```bash
-npm run reset-project
-```
+* Nainstalovaný [Node.js](https://nodejs.org/) (doporučena aktuální LTS verze)
+* Nainstalovaný [npm](https://www.npmjs.com/) (obvykle se instaluje s Node.js) nebo [Yarn](https://yarnpkg.com/)
+* Expo Go aplikace na vašem mobilním zařízení (Android/iOS) nebo nastavený Android emulátor.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Kroky instalace
 
-## Learn more
+1.  **Klonujte repozitář:**
+    ```bash
+    git clone https://github.com/M3chro/CitaceApp.git
+    cd CitaceApp
+    ```
 
-To learn more about developing your project with Expo, look at the following resources:
+2.  **Nainstalujte závislosti:**
+Ve složce `CitaceApp`:
+    ```bash
+    npm install
+    # nebo
+    yarn install
+    ```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+3.  **Nastavení API klíče (proměnné prostředí):**
+    * Aplikace vyžaduje API klíč pro přístup k Quotes15 API (ten je nutné si vygenerovat [zde](https://rapidapi.com/martin.svoboda/api/quotes15)).
+    * Vytvořte v kořenovém adresáři projektu soubor `.env.local`.
+    * Do tohoto souboru vložte váš RapidAPI klíč ve formátu (ukázku lze vidět v `.env.example` souboru):
+    ```env
+      EXPO_PUBLIC_RAPIDAPI_KEY=VAŠ_SKUTEČNÝ_RAPIDAPI_KLÍČ
+    ```
 
-## Join the community
+## 📱 Spuštění Aplikace
 
-Join our community of developers creating universal apps.
+1.  **Spusťte vývojový server Expo:**
+    ```bash
+    npx expo start
+    ```
+      Při spouštění na Expo Go (fyzickém zařízení) je vhodné spustit skrze tunel (ngrok).
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+    ```bash
+    npx expo start --tunnel
+    ```
+
+2.  Po spuštění serveru se v terminálu zobrazí QR kód.
+    * **Na fyzickém zařízení:** Otevřete aplikaci Expo Go a naskenujte QR kód.
+    * **Na emulátoru:** Emulátor se dá například získat při nainstalování [Android Studia](https://developer.android.com/studio). V `Device Manager` ho pak stačí spustit (aplikace byla testována na emulátoru pro Pixel 9 a zároveň lokálně na iPhone 13 mini). V terminálu můžete stisknout klávesu `a` pro spuštění na Android emulátoru (musí být předem spuštěn a nakonfigurován).
+
+## 📂 Struktura Projektu (Zjednodušeně)
+
+* `app/`: Obsahuje soubory pro routování a obrazovky aplikace (využívá Expo Router).
+    * `(tabs)/`: Adresář pro obrazovky spravované tabovou navigací (`index.tsx`, `favorites.tsx`) a jejich layout (`_layout.tsx`).
+    * `author/`: Adresář pro obrazovky týkající se autora (`[authorName].tsx`).
+    * `_layout.tsx`: Hlavní (root) layout aplikace, definuje Stack navigátor.
+* `components/`: Znovupoužitelné React komponenty (`QuoteCard.tsx`, `LanguageSelector.tsx`, `StatusDisplay.tsx`).
+* `utils/`: Pomocné funkce a moduly (`api.ts` pro komunikaci s API, `storage.ts` pro AsyncStorage, `uiHelpers.ts`).
+* `.env.local`: Lokální soubor pro uložení API klíče (není ve verzování).
+* `.env.example`: Šablona pro `.env`
+
+## 👨‍💻 Autor
+
+* Jakub Havel
