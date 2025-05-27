@@ -12,6 +12,12 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 
+/**
+ * Obrazovka `AuthorDetailScreen` zobrazuje detailní informace o autorovi
+ * načtené ze stránky Wikipedia.org pomocí komponenty WebView.
+ * Jméno autora je předáno jako parametr v URL.
+ * Umožňuje také otevření stránky v externím prohlížeči.
+ */
 export default function AuthorDetailScreen() {
   const params = useLocalSearchParams<{ authorName?: string }>();
 
@@ -21,6 +27,10 @@ export default function AuthorDetailScreen() {
   const wikipediaLanguage = 'cs'; // Jenom česká wiki
   const wikipediaUrl = `https://${wikipediaLanguage}.m.wikipedia.org/wiki/${authorName.replace(/ /g, '_')}`;
 
+  /**
+   * Handler pro otevření aktuální Wikipedia URL v externím prohlížeči zařízení.
+   * Ověří, zda je možné URL otevřít, a poté ji otevře. V případě chyby zobrazí Alert.
+   */
   const handleOpenInBrowser = () => {
     Linking.canOpenURL(wikipediaUrl).then(supported => {
       if (supported) {
@@ -34,6 +44,7 @@ export default function AuthorDetailScreen() {
     });
   };
 
+  /** Pokud jméno autora nebylo předáno v parametrech, zobrazí se chybová zpráva. */
   if (!params.authorName) {
       return (
           <SafeAreaView style={styles.safeArea}>

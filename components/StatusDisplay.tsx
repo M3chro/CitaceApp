@@ -2,6 +2,9 @@ import React from 'react';
 import { ActivityIndicator, Button, StyleSheet, Text, View } from 'react-native';
 import { getResponsiveFontSize } from '../utils/uiHelpers';
 
+/**
+ * Props pro komponentu StatusDisplay.
+ */
 interface StatusDisplayProps {
   isLoading: boolean;
   error: string | null;
@@ -11,6 +14,13 @@ interface StatusDisplayProps {
   noDataText?: string;
 }
 
+/**
+ * Komponenta `StatusDisplay` slouží k zobrazení různých stavových zpráv uživateli,
+ * jako je indikátor načítání, chybová hláška s možností opakování akce,
+ * nebo zpráva o tom, že nejsou k dispozici žádná data.
+ * @param {StatusDisplayProps} props - Props pro komponentu.
+ * @returns {JSX.Element | null} Element komponenty zobrazující příslušný stav, nebo null, pokud má být zobrazen hlavní obsah.
+ */
 const StatusDisplay: React.FC<StatusDisplayProps> = ({
   isLoading,
   error,

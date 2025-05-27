@@ -12,10 +12,20 @@ import QuoteCard from '../../components/QuoteCard';
 import { Quote } from '../../utils/api';
 import * as FavoritesStorage from '../../utils/storage';
 
+/**
+ * Obrazovka `FavoritesScreen` zobrazuje seznam citací, které si uživatel označil jako oblíbené.
+ * Umožňuje také odebrání citací z tohoto seznamu.
+ * Data se načítají z lokálního AsyncStorage při každém zaměření (focus) obrazovky.
+ */
 export default function FavoritesScreen() {
   const [favoriteQuotes, setFavoriteQuotes] = useState<Quote[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  /**
+   * Asynchronní funkce pro načtení seznamu oblíbených citací z AsyncStorage.
+   * Aktualizuje stavy `favoriteQuotes` a `isLoading`.
+   * Obaleno v `useCallback` pro stabilní referenci v `useFocusEffect`.
+   */
   const loadFavorites = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -30,6 +40,10 @@ export default function FavoritesScreen() {
     }
   }, []);
 
+  /**
+   * `useEffect` hook, který se spouští vždy, když se obrazovka stane aktivní (dostane focus).
+   * Zajišťuje, že seznam oblíbených citací je vždy aktuální.
+   */
   useFocusEffect(
     useCallback(() => {
       console.log("[UI Favorites] Obrazovka zaměřena, načítám oblíbené...");
@@ -40,6 +54,11 @@ export default function FavoritesScreen() {
     }, [loadFavorites])
   );
 
+  /**
+   * Handler pro odebrání citace ze seznamu oblíbených.
+   * Zobrazí potvrzovací dialog a po potvrzení odebere citaci a obnoví seznam.
+   * @param quoteToRemove Objekt citace typu {@link Quote}, která má být odebrána.
+   */
   const handleToggleFavoriteOnFavoritesScreen = async (quoteToRemove: Quote) => {
     Alert.alert(
       "Odebrat z oblíbených",
