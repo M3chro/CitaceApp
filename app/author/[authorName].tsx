@@ -1,13 +1,13 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    Button,
-    Linking,
-    StyleSheet,
-    Text,
-    View,
+  ActivityIndicator,
+  Alert,
+  Button,
+  Linking,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';

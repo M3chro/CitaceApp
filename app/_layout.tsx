@@ -1,13 +1,11 @@
-// app/_layout.tsx
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-// import { RootSiblingParent } from 'react-native-root-siblings'; // Pokud používáte Toasty
 
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <Stack
-        screenOptions={{ // Globální nastavení pro všechny obrazovky ve Stacku
+        screenOptions={{
           headerStyle: { backgroundColor: '#3498db' },
           headerTintColor: '#fff',
           headerTitleStyle: { fontWeight: 'bold' },
@@ -16,7 +14,7 @@ export default function RootLayout() {
       >
         <Stack.Screen
           name="(tabs)"
-          options={{ headerShown: false }} // Samotný "obal tabů" nemá vlastní hlavičku
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="author/[authorName]"

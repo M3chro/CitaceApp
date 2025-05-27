@@ -1,6 +1,4 @@
-// app/(tabs)/index.tsx
-import { useRouter } from 'expo-router'; // Stále může být potřeba pro jinou navigaci, i když ne pro /favorites
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Button,
@@ -9,17 +7,13 @@ import {
   StyleSheet,
   View
 } from 'react-native';
-
-// Upravené cesty k importům (o úroveň výše)
 import LanguageSelector from '../../components/LanguageSelector';
 import QuoteCard from '../../components/QuoteCard';
 import StatusDisplay from '../../components/StatusDisplay';
 import { fetchRandomQuote, getAvailableLanguages, Language, Quote } from '../../utils/api';
 import * as FavoritesStorage from '../../utils/storage';
 
-// Hlavní komponenta obrazovky - nyní bez explicitního návratového typu JSX.Element
 export default function HomeScreen() {
-  const router = useRouter(); // Ponecháváme pro případné další navigace z této obrazovky
   const [quote, setQuote] = useState<Quote | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,8 +21,17 @@ export default function HomeScreen() {
   const [languages, setLanguages] = useState<Language[]>([]);
   const [isCurrentQuoteFavorite, setIsCurrentQuoteFavorite] = useState<boolean>(false);
 
+  const [isCoolingDown, setIsCoolingDown] = useState<boolean>(false);
+  const cooldownTimerRef = useRef<NodeJS.Timeout | number | null>(null);
+
   useEffect(() => {
     setLanguages(getAvailableLanguages());
+
+    return () => {
+      if (cooldownTimerRef.current) {
+        clearTimeout(cooldownTimerRef.current);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -48,30 +51,47 @@ export default function HomeScreen() {
     console.log(`[UI TabsIndex] Načítám citaci pro jazyk: ${currentLanguage}`);
     setIsLoading(true);
     setError(null);
-    // setQuote(null); // Reset až po fetchi
+    setQuote(null);
+
     try {
       const fetchedQuote = await fetchRandomQuote(currentLanguage);
       setQuote(fetchedQuote);
     } catch (err: any) {
       console.error("[UI TabsIndex] Chyba při načítání citace:", err.message);
-      setError(err.message || 'Nepodařilo se načíst citaci.');
+      setError(err.message || 'Nepodařilo se načíst citaci. Zkuste to prosím znovu.');
       setQuote(null);
     } finally {
       setIsLoading(false);
+      setIsCoolingDown(true);
+      if (cooldownTimerRef.current) {
+        clearTimeout(cooldownTimerRef.current);
+      }
+      cooldownTimerRef.current = setTimeout(() => {
+        setIsCoolingDown(false);
+        console.log('[UI TabsIndex] Cooldown pro tlačítko "Další citace" ukončen.');
+      }, 1000); // Cooldown 1 sekunda (1000 ms)
     }
   }, [currentLanguage]);
 
   useEffect(() => {
     loadQuote();
-  }, [loadQuote]); // Spustí se při prvním renderu a když se změní currentLanguage (což změní referenci loadQuote)
+  }, [loadQuote]);
+
 
   const handleRefresh = () => {
+    if (isLoading || isCoolingDown) {
+      if (isLoading) console.log('[UI TabsIndex] Načítání již probíhá, ignoruji kliknutí.');
+      if (isCoolingDown) console.log('[UI TabsIndex] Tlačítko je v cooldownu, ignoruji kliknutí.');
+      return;
+    }
     loadQuote();
   };
 
   const handleLanguageChange = (newLanguage: string) => {
+    if (isLoading || isCoolingDown) {
+      console.log('[UI TabsIndex] Načítání/cooldown probíhá, změna jazyka bude mít efekt později nebo je ignorována.');
+    }
     setCurrentLanguage(newLanguage);
-    // loadQuote se zavolá automaticky díky useEffect, který sleduje změnu currentLanguage
   };
 
   const handleToggleFavorite = async (quoteToToggle: Quote) => {
@@ -124,7 +144,7 @@ export default function HomeScreen() {
         selectedValue={currentLanguage}
         onValueChange={handleLanguageChange}
         languages={languages}
-        enabled={languages.length > 1 && !isLoading}
+        enabled={languages.length > 1 && !isLoading && !isCoolingDown} // Picker je neaktivní i během cooldownu a načítání
       />
 
       <View style={styles.contentArea}>
@@ -135,16 +155,14 @@ export default function HomeScreen() {
         <Button
           title="Další citace"
           onPress={handleRefresh}
-          disabled={isLoading}
+          disabled={isLoading || isCoolingDown} // Tlačítko je neaktivní i během cooldownu a načítání
           color="#2980b9"
         />
-        {/* Tlačítko "Zobrazit oblíbené" bylo ODSTRANĚNO - navigace je nyní přes taby */}
       </View>
     </ScrollView>
   );
 }
 
-// Styly zůstávají stejné jako v poslední verzi app/index.tsx před přesunem
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
